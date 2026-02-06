@@ -1,35 +1,552 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Smart Rename Tool</title>
-<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
-<script src="https://unpkg.com/@phosphor-icons/web"></script>
-<style>:root{--p-g:linear-gradient(135deg,#8B5CF6 0%,#3B82F6 100%);--p-c:#6366f1;--t-m:#1f2937;--t-l:#6b7280;--w:#ffffff;--s-m:0 4px 6px -1px rgba(0,0,0,.1);--s-l:0 10px 15px -3px rgba(0,0,0,.1);--r:16px}body{font-family:Sarabun,sans-serif;background-color:#f8fafc;background-image:radial-gradient(#e2e8f0 1px,transparent 1px);background-size:24px 24px;color:var(--t-m);margin:0;padding:40px 20px;display:flex;justify-content:center;min-height:100vh}.container{background:var(--w);border-radius:var(--r);box-shadow:var(--s-l);width:100%;max-width:1000px;padding:40px;text-align:center;position:relative;overflow:hidden}.container::before{content:'';position:absolute;top:0;left:0;right:0;height:6px;background:var(--p-g)}h1{font-weight:700;font-size:1.8rem;margin-bottom:.5rem;background:var(--p-g);-webkit-background-clip:text;-webkit-text-fill-color:transparent;display:inline-block}.subtitle{color:var(--t-l);margin-bottom:25px;font-size:1rem}.warning{background-color:#fff7ed;border:1px solid #ffedd5;color:#c2410c;padding:12px 20px;border-radius:12px;font-size:.9em;display:inline-flex;align-items:center;gap:10px;margin-bottom:30px;box-shadow:var(--s-m)}#d-z{border:2px dashed #cbd5e1;border-radius:var(--r);padding:60px 20px;background-color:#f8fafc;transition:.3s;cursor:pointer;margin-bottom:30px}#d-z:hover{border-color:var(--p-c);background-color:#eef2ff;transform:translateY(-2px)}#d-z p{font-size:1.1rem;color:var(--t-l);display:flex;flex-direction:column;align-items:center;gap:15px}#d-z p::before{content:'\e9f3';font-family:'Phosphor';font-size:3rem;color:#818cf8}.controls{background:var(--w);padding:25px;border-radius:12px;border:1px solid #e5e7eb;box-shadow:var(--s-m);margin-bottom:30px;display:flex;flex-direction:column;gap:20px}.controls-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}.control-section{display:flex;flex-direction:column;gap:15px;padding:15px;background-color:#f9fafb;border-radius:10px;border:1px solid #f3f4f6}.section-title{font-size:.9rem;font-weight:700;color:var(--t-l);text-transform:uppercase;display:flex;align-items:center;gap:8px}.input-group{display:flex;flex-direction:column;align-items:flex-start;gap:5px}.input-row{display:flex;align-items:center;gap:10px;width:100%}label{font-size:.9rem;font-weight:600;min-width:60px}input{padding:10px 12px;border:1px solid #d1d5db;border-radius:8px;font-size:15px;width:100%;outline:0}input[type=number]{width:80px;text-align:center}.btn-process{padding:12px 40px;border:none;border-radius:50px;background:var(--p-g);color:#fff;font-size:16px;font-weight:600;cursor:pointer;transition:.3s;box-shadow:0 4px 12px rgba(79,70,229,.3);display:flex;align-items:center;gap:10px;margin:0 auto}.table-wrapper{overflow-x:auto;border-radius:12px;border:1px solid #e5e7eb;max-height:500px}table{width:100%;border-collapse:collapse;font-size:.95em}th{background:#f9fafb;color:var(--t-l);position:sticky;top:0;padding:16px;z-index:10;box-shadow:0 1px 0 #e5e7eb}td{padding:14px 16px;border-bottom:1px solid #f3f4f6}.new-name{color:#059669;font-weight:600;background:#ecfdf5;padding:4px 8px;border-radius:6px}.no-change{color:#9ca3af;font-style:italic}.hidden{display:none!important}@media (max-width:640px){.controls-grid{grid-template-columns:1fr}.input-row{flex-direction:column}}</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Rename Tool</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #8B5CF6 0%, #3B82F6 100%);
+            --primary-color: #6366f1;
+            --text-main: #1f2937;
+            --text-light: #6b7280;
+            --white: #ffffff;
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --radius: 16px;
+        }
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #f8fafc;
+            background-image: radial-gradient(#e2e8f0 1px, transparent 1px);
+            background-size: 24px 24px;
+            color: var(--text-main);
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            width: 100%;
+            max-width: 1000px; /* ขยายความกว้างเล็กน้อยเพื่อรองรับเครื่องมือที่มากขึ้น */
+            padding: 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: var(--primary-gradient);
+        }
+
+        h1 {
+            font-weight: 700;
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
+
+        .subtitle {
+            color: var(--text-light);
+            margin-bottom: 25px;
+            font-size: 1rem;
+        }
+
+        .warning {
+            background-color: #fff7ed;
+            border: 1px solid #ffedd5;
+            color: #c2410c;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-size: 0.9em;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Drop Zone */
+        #dropZone {
+            border: 2px dashed #cbd5e1;
+            border-radius: var(--radius);
+            padding: 60px 20px;
+            background-color: #f8fafc;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        #dropZone:hover, #dropZone.dragover {
+            border-color: var(--primary-color);
+            background-color: #eef2ff;
+            transform: translateY(-2px);
+        }
+
+        #dropZone p {
+            font-size: 1.1rem;
+            color: var(--text-light);
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        #dropZone p::before {
+            content: '\e9f3'; 
+            font-family: 'Phosphor';
+            font-size: 3rem;
+            color: #818cf8;
+            margin-bottom: 10px;
+        }
+
+        /* Control Panel Grid */
+        .controls {
+            background: var(--white);
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            box-shadow: var(--shadow-md);
+            margin-bottom: 30px;
+            animation: slideDown 0.4s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .controls-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .control-section {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            padding: 15px;
+            background-color: #f9fafb;
+            border-radius: 10px;
+            border: 1px solid #f3f4f6;
+        }
+
+        .section-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 5px;
+        }
+
+        .input-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+        }
+
+        label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-main);
+            white-space: nowrap;
+            min-width: 60px;
+        }
+
+        input[type="number"], input[type="text"] {
+            padding: 10px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 15px;
+            font-family: inherit;
+            transition: 0.2s;
+            outline: none;
+            width: 100%;
+        }
+
+        input[type="number"] { width: 80px; text-align: center; }
+
+        input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+        }
+
+        /* Process Button Area */
+        .action-area {
+            display: flex;
+            justify-content: center;
+            padding-top: 10px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        button.btn-process {
+            padding: 12px 40px;
+            border: none;
+            border-radius: 50px;
+            background: var(--primary-gradient);
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        button.btn-process:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(79, 70, 229, 0.4);
+            filter: brightness(1.1);
+        }
+
+        /* Table */
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95em;
+            background: white;
+        }
+
+        th {
+            background-color: #f9fafb;
+            color: var(--text-light);
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            padding: 16px;
+            z-index: 10;
+            box-shadow: 0 1px 0 #e5e7eb;
+        }
+
+        td {
+            padding: 14px 16px;
+            border-bottom: 1px solid #f3f4f6;
+            vertical-align: middle;
+        }
+
+        .new-name {
+            color: #059669;
+            font-weight: 600;
+            background: #ecfdf5;
+            padding: 4px 8px;
+            border-radius: 6px;
+            display: inline-block;
+        }
+
+        .no-change { color: #9ca3af; font-style: italic; }
+        .hidden { display: none !important; }
+
+        @media (max-width: 640px) {
+            .controls-grid { grid-template-columns: 1fr; }
+            .input-row { flex-direction: column; align-items: stretch; }
+            input[type="number"] { width: 100%; }
+        }
+        
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+    </style>
 </head>
 <body>
-<div class="container">
-    <h1>✨ Smart Rename Tool</h1>
-    <p class="subtitle">เครื่องมือเปลี่ยนชื่อไฟล์อัจฉริยะ</p>
-    <div class="warning"><i class="ph ph-warning-circle"></i><span><strong>คำเตือน:</strong> กรุณาสำรองข้อมูลก่อนใช้งาน</span></div>
-    <div id="d-z"><p><span>ลากโฟลเดอร์มาวางที่นี่</span><span style="font-size:.9em;">หรือ คลิกเพื่อเลือก</span></p></div>
-    <div class="controls hidden" id="c-p">
-        <div class="controls-grid">
-            <div class="control-section"><div class="section-title"><i class="ph ph-arrow-line-right"></i> ด้านหน้า</div>
-                <div class="input-group"><div class="input-row"><label>ตัด:</label><input type="number" id="c-f" value="0"><span>ตัว</span></div></div>
-                <div class="input-group"><div class="input-row"><label>เติม:</label><input type="text" id="a-f" placeholder="ข้อความหน้า"></div></div>
+
+    <div class="container">
+        <h1>✨ Smart Rename Tool</h1>
+        <p class="subtitle">เครื่องมือตัดต่อชื่อไฟล์หน้าหลังอัจฉริยะ สะดวก รวดเร็ว ปลอดภัย</p>
+        
+        <div class="warning">
+            <i class="ph ph-warning-circle" style="font-size: 1.2em;"></i>
+            <span><strong>คำเตือน:</strong> โปรแกรมจะแก้ไขชื่อไฟล์จริง กรุณาสำรองข้อมูลก่อนใช้งาน</span>
+        </div>
+
+        <div id="dropZone">
+            <p>
+                <span style="font-weight:600; color:#333;">ลากโฟลเดอร์มาวางที่นี่</span>
+                <span style="font-size: 0.9em;">หรือ คลิกเพื่อเลือกโฟลเดอร์</span>
+            </p>
+        </div>
+
+        <div class="controls hidden" id="controlPanel">
+            <div class="controls-grid">
+                
+                <div class="control-section">
+                    <div class="section-title"><i class="ph ph-arrow-line-right"></i> จัดการส่วนหน้า</div>
+                    
+                    <div class="input-group">
+                        <div class="input-row">
+                            <label>ตัดหน้า:</label>
+                            <input type="number" id="cutFront" value="0" min="0" placeholder="0">
+                            <span>ตัวอักษร</span>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <div class="input-row">
+                            <label>เติมหน้า:</label>
+                            <input type="text" id="addFront" placeholder="ข้อความที่ต้องการเติมข้างหน้า">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="control-section">
+                    <div class="section-title"><i class="ph ph-arrow-line-left"></i> จัดการส่วนหลัง</div>
+                    
+                    <div class="input-group">
+                        <div class="input-row">
+                            <label>ตัดหลัง:</label>
+                            <input type="number" id="cutBack" value="0" min="0" placeholder="0">
+                            <span>ตัวอักษร</span>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <div class="input-row">
+                            <label>เติมหลัง:</label>
+                            <input type="text" id="addBack" placeholder="ข้อความที่ต้องการเติมข้างหลัง">
+                        </div>
+                    </div>
+                </div>
+
             </div>
-            <div class="control-section"><div class="section-title"><i class="ph ph-arrow-line-left"></i> ด้านหลัง</div>
-                <div class="input-group"><div class="input-row"><label>ตัด:</label><input type="number" id="c-b" value="0"><span>ตัว</span></div></div>
-                <div class="input-group"><div class="input-row"><label>เติม:</label><input type="text" id="a-b" placeholder="ข้อความหลัง"></div></div>
+
+            <div class="action-area">
+                <button class="btn-process" id="btnRename">
+                    <i class="ph ph-lightning"></i> ยืนยันเปลี่ยนชื่อไฟล์ทั้งหมด
+                </button>
             </div>
         </div>
-        <button class="btn-process" id="b-r"><i class="ph ph-lightning"></i> ยืนยันเปลี่ยนชื่อทั้งหมด</button>
+
+        <div id="previewTable" class="table-wrapper hidden">
+            <table>
+                <thead>
+                    <tr>
+                        <th width="40%">ชื่อเดิม</th>
+                        <th width="10%">สถานะ</th>
+                        <th width="50%">ชื่อใหม่ (ตัวอย่าง)</th>
+                    </tr>
+                </thead>
+                <tbody id="fileListBody">
+                    </tbody>
+            </table>
+        </div>
     </div>
-    <div id="p-t" class="table-wrapper hidden"><table><thead><tr><th>ชื่อเดิม</th><th></th><th>ชื่อใหม่</th></tr></thead><tbody id="f-l"></tbody></table></div>
-</div>
-<script>
-(function(){let _d,_f=[];const _q=s=>document.getElementById(s),_dz=_q('d-z'),_cp=_q('c-p'),_pt=_q('p-t'),_fl=_q('f-l'),_cf=_q('c-f'),_af=_q('a-f'),_cb=_q('c-b'),_ab=_q('a-b'),_br=_q('b-r');const _gn=(n)=>{const cf=parseInt(_cf.value)||0,cb=parseInt(_cb.value)||0,af=_af.value||"",ab=_ab.value||"";let i=n.lastIndexOf('.'),nm=i>0?n.substring(0,i):n,ex=i>0?n.substring(i):"";nm=af+nm.substring(cf,nm.length-cb)+ab;return nm+ex};const _up=()=>{_fl.innerHTML='';_f.forEach(h=>{const nn=_gn(h.name),tr=document.createElement('tr'),ic=h.name!==nn;tr.innerHTML=`<td>${h.name}</td><td style="text-align:center">→</td><td><span class="${ic?'new-name':'no-change'}">${nn||'空'}</span></td>`;_fl.appendChild(tr)})};const _pd=async(h)=>{_f=[];const o={mode:'readwrite'};if(await h.queryPermission(o)!=='granted')if(await h.requestPermission(o)!=='granted')return alert('Denied');for await(const e of h.values())if(e.kind==='file')_f.push(e);_f.sort((a,b)=>a.name.localeCompare(b.name));_dz.classList.add('hidden');_cp.classList.remove('hidden');_pt.classList.remove('hidden');_up()};_dz.onclick=async()=>{try{_d=await window.showDirectoryPicker();await _pd(_d)}catch(e){}};_dz.ondragover=e=>{e.preventDefault();_dz.style.borderColor='var(--p-c)'};_dz.ondrop=async(e)=>{e.preventDefault();const i=[...e.dataTransfer.items];if(i[0]&&i[0].getAsFileSystemHandle){const h=await i[0].getAsFileSystemHandle();if(h.kind==='directory'){_d=h;await _pd(_d)}}};[_cf,_af,_cb,_ab].forEach(i=>i.oninput=_up);_br.onclick=async()=>{if(!confirm(`ยืนยันเปลี่ยนชื่อ ${_f.length} ไฟล์?`))return;let s=0;for(const h of _f){const nn=_gn(h.name);if(nn&&nn!==h.name)try{await h.move(nn);s++}catch(e){console.error(e)}}alert(`สำเร็จ ${s} ไฟล์`);await _pd(_d)}})();
-</script>
+
+    <script>
+        let dirHandle;
+        let fileHandles = [];
+
+        // Elements
+        const dropZone = document.getElementById('dropZone');
+        const controlPanel = document.getElementById('controlPanel');
+        const previewTable = document.getElementById('previewTable');
+        const fileListBody = document.getElementById('fileListBody');
+        
+        // Inputs
+        const cutFrontInput = document.getElementById('cutFront');
+        const addFrontInput = document.getElementById('addFront');
+        const cutBackInput = document.getElementById('cutBack');
+        const addBackInput = document.getElementById('addBack');
+        
+        const btnRename = document.getElementById('btnRename');
+
+        // 1. Drag & Drop + Click
+        dropZone.addEventListener('click', async () => {
+            try {
+                dirHandle = await window.showDirectoryPicker();
+                await processDirectory(dirHandle);
+            } catch (err) { console.log('Cancelled'); }
+        });
+
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('dragover');
+        });
+
+        dropZone.addEventListener('drop', async (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            const items = [...e.dataTransfer.items];
+            if (items[0] && items[0].kind === 'file' && items[0].getAsFileSystemHandle) {
+                const handle = await items[0].getAsFileSystemHandle();
+                if (handle.kind === 'directory') {
+                    dirHandle = handle;
+                    await processDirectory(dirHandle);
+                } else {
+                    alert('กรุณาลาก "โฟลเดอร์" เท่านั้น');
+                }
+            } else {
+                alert('Browser ไม่รองรับการลากโฟลเดอร์โดยตรง');
+            }
+        });
+
+        // 2. Process Directory
+        async function processDirectory(handle) {
+            fileHandles = [];
+            const options = { mode: 'readwrite' };
+            
+            // Check Permission
+            if ((await handle.queryPermission(options)) !== 'granted') {
+                if ((await handle.requestPermission(options)) !== 'granted') {
+                    alert('ต้องอนุญาตสิทธิ์แก้ไขไฟล์ก่อนครับ');
+                    return;
+                }
+            }
+
+            for await (const entry of handle.values()) {
+                if (entry.kind === 'file') fileHandles.push(entry);
+            }
+
+            fileHandles.sort((a, b) => a.name.localeCompare(b.name));
+
+            // Show UI
+            dropZone.classList.add('hidden');
+            controlPanel.classList.remove('hidden');
+            previewTable.classList.remove('hidden');
+            
+            updatePreview();
+        }
+
+        // 3. Logic: Calculate New Name
+        function getNewName(fileName) {
+            // Inputs values
+            const cutFront = parseInt(cutFrontInput.value) || 0;
+            const cutBack = parseInt(cutBackInput.value) || 0;
+            const addFront = addFrontInput.value || "";
+            const addBack = addBackInput.value || "";
+
+            // แยกชื่อและนามสกุล (เพื่อไม่ให้ตัดนามสกุลทิ้ง ถ้าไม่อยากให้ตัด)
+            let lastDotIndex = fileName.lastIndexOf('.');
+            let name = fileName;
+            let ext = "";
+
+            if (lastDotIndex > 0) {
+                name = fileName.substring(0, lastDotIndex);
+                ext = fileName.substring(lastDotIndex);
+            }
+
+            // A. ตัดหน้า
+            if (cutFront > 0) {
+                name = name.substring(cutFront);
+            }
+
+            // B. ตัดหลัง
+            if (cutBack > 0) {
+                if (cutBack < name.length) {
+                    name = name.substring(0, name.length - cutBack);
+                } else {
+                    name = ""; // ตัดหมด
+                }
+            }
+
+            // C. เติมหน้า
+            name = addFront + name;
+
+            // D. เติมหลัง (ก่อนนามสกุล)
+            name = name + addBack;
+
+            return name + ext;
+        }
+
+        // 4. Update Preview
+        function updatePreview() {
+            fileListBody.innerHTML = '';
+
+            fileHandles.forEach(file => {
+                const oldName = file.name;
+                const newName = getNewName(oldName);
+                
+                const tr = document.createElement('tr');
+                const isChanged = oldName !== newName && newName !== "";
+                
+                tr.innerHTML = `
+                    <td style="color:#4b5563;">${oldName}</td>
+                    <td style="color:#9ca3af; text-align:center;"><i class="ph ph-arrow-right"></i></td>
+                    <td>
+                        <span class="${isChanged ? 'new-name' : 'no-change'}">
+                            ${newName === "" ? "(ชื่อว่างเปล่า)" : newName}
+                        </span>
+                    </td>
+                `;
+                fileListBody.appendChild(tr);
+            });
+        }
+
+        // Listeners for all inputs
+        [cutFrontInput, addFrontInput, cutBackInput, addBackInput].forEach(input => {
+            input.addEventListener('input', updatePreview);
+        });
+
+        // 5. Execute Rename
+        btnRename.addEventListener('click', async () => {
+            if (!confirm(`ยืนยันการเปลี่ยนชื่อไฟล์จำนวน ${fileHandles.length} ไฟล์?`)) return;
+
+            let successCount = 0;
+            let errorCount = 0;
+
+            for (const fileHandle of fileHandles) {
+                const oldName = fileHandle.name;
+                const newName = getNewName(oldName);
+
+                if (newName && newName !== oldName) {
+                    try {
+                        await fileHandle.move(newName);
+                        successCount++;
+                    } catch (err) {
+                        console.error(`Error renaming ${oldName}:`, err);
+                        errorCount++;
+                    }
+                }
+            }
+
+            alert(`เสร็จสิ้น!\n✅ สำเร็จ: ${successCount}\n❌ ผิดพลาด: ${errorCount}`);
+            await processDirectory(dirHandle); // Refresh
+        });
+
+    </script>
 </body>
 </html>
